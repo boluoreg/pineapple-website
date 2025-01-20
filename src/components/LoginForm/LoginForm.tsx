@@ -79,9 +79,9 @@ function LoginForm() {
             setToken(JSON.stringify(response.data.data));
         } catch (err) {
             if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+                setError(err.response?.data?.message || "🍍菠萝户不对 或者菠萝🍍端没开");
             } else {
-                setError("An unexpected error occurred.");
+                setError("菠萝🍍错误");
             }
         }
     };
