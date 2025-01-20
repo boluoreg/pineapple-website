@@ -1,13 +1,16 @@
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
+import {useLocalStorage} from "../../utils.ts";
+
+import styles from "./LoginForm.module.css"
 
 function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    interface LoginResponse {
+    interface Token {
         username: string;
         token: string;
         expire: number;
@@ -20,23 +23,60 @@ function LoginForm() {
         data: T;
     }
 
+    const [api, setApi] = useLocalStorage("api");
+    const [token, setToken] = useLocalStorage("token");
+    const [clickCount, setClickCount] = useState(0);
+
+    if (api === null) {
+        setApi("http://localhost:8080");
+    }
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const apiParam = params.get('api');
+
+        if (apiParam) {
+            setApi(apiParam);
+            params.delete("api")
+            window.location.search = params.toString()
+        }
+    }, [setApi]);
+
+    const processLogout = async () => {
+        if (clickCount === 0) {
+            setClickCount(clickCount + 1);
+            return;
+        }
+        setToken(null);
+        // post to the logout endpoint
+        const tokenObj: Token = JSON.parse(token)
+        const jwt = tokenObj.token;
+        await axios.post<RestBean<Token>>(`${api}/api/user/logout`, null, {
+            headers: {
+                'Authorization': `Bearer ${jwt}`
+            }
+        });
+    }
+
+    const processBack = () => {
+        window.location.href = "/";
+    }
+
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-        e.preventDefault(); // 阻止默认表单提交行为
-        setError(null); // 清除之前的错误
+        e.preventDefault();
+        setError(null);
 
         try {
-            const response = await axios.post<RestBean<LoginResponse>>("http://127.0.0.1:8080/api/user/login", {
-                username,
-                password,
-            });
+            const response = await axios.post<RestBean<Token>>(`${api}/api/user/login`,
+                `username=${username}&&password=${password}`
+            );
 
             if (!(response.data.code === 200)) {
                 setError(response.data.message);
                 return
             }
-            localStorage.setItem("token", JSON.stringify(response.data.data));
-            alert("Login successful!"); // todo
+            setToken(JSON.stringify(response.data.data));
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 setError(err.response?.data?.message || "Login failed. Please check your credentials.");
@@ -46,42 +86,63 @@ function LoginForm() {
         }
     };
 
+    if (token !== null) {
+        // decode token
+        const tokenObj: Token = JSON.parse(token)
+        if (tokenObj.expire > Date.now()) {
+            return (
+                <div
+                    style={{
+                        maxWidth: "350px",
+                        margin: "auto",
+                        padding: "20px",
+                        border: "1px solid #ccc",
+                        borderRadius: "5px"
+                    }}>
+                    <h2>🍍你的菠萝🍍</h2>
+                    <p onClick={() => {}}>菠萝🍍农场: {api} (点击可更换/复制分享链接)</p>
+                    <p>恭喜你,你已经成功登录 你的用户名是{tokenObj.username}</p>
+                    <p>你要退出登录吗?请点击下面的<label className={styles.red}>红色</label>按钮</p>
+                    <button onClick={processLogout} className={`${styles.button} ${styles.red}`}>
+                        {clickCount === 0 ? '出售菠萝🍍' : '你确认吗?请再点击一次'}
+                    </button>
+                    <button onClick={processBack} className={`${styles.button} ${styles.blue}`}>
+                        不,我想要更多菠萝🍍
+                    </button>
+                </div>
+            )
+        }
+    }
+
     return (
         <div
-            style={{maxWidth: "300px", margin: "auto", padding: "20px", border: "1px solid #ccc", borderRadius: "5px"}}>
-            <h2>Login</h2>
+            style={{maxWidth: "350px", margin: "auto", padding: "20px", border: "1px solid #ccc", borderRadius: "5px"}}>
+            <h2>🍍登录你的菠萝🍍</h2>
+            <p>菠萝🍍农场: {api} (点击可更换/复制分享链接)</p>
             {error && <p style={{color: "red"}}>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Username:</label>
+                    <label>用户名:</label>
                     <input
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
-                        style={{width: "100%", padding: "8px", margin: "5px 0"}}
+                        style={{width: "90%", padding: "8px", margin: "5px 0"}}
                     />
                 </div>
                 <div>
-                    <label>Password:</label>
+                    <label>密码:</label>
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        style={{width: "100%", padding: "8px", margin: "5px 0"}}
+                        style={{width: "90%", padding: "8px", margin: "5px 0"}}
                     />
                 </div>
-                <button type="submit" style={{
-                    width: "100%",
-                    padding: "10px",
-                    marginTop: "10px",
-                    background: "blue",
-                    color: "white",
-                    border: "none",
-                    cursor: "pointer"
-                }}>
-                    Login
+                <button type="submit" className={`${styles.button} ${styles.blue}`}>
+                    要一个菠萝🍍
                 </button>
             </form>
         </div>
