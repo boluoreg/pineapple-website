@@ -14,7 +14,7 @@ function LoginForm() {
     const [passwordVerify, setPasswordVerify] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    const [mode, setMode] = useState("login")
+    const [mode, setMode] = useState(window.location.hash || "login")
 
     const [api, setApi] = useLocalStorage("api");
     const [token, setToken] = useLocalStorage("token");
@@ -59,6 +59,11 @@ function LoginForm() {
     const handleToggleRegister = () => {
         setMode(mode !== "register" ? "register" : "login");
     }
+
+    useEffect(() => {
+        window.location.hash = mode;
+    }, [mode]);
+
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -123,20 +128,23 @@ function LoginForm() {
         const tokenObj: Token = JSON.parse(token)
         if (tokenObj.expire > Date.now()) {
             if (mode === "change-password") {
-                return <ChangePasswordForm token={tokenObj} handleBack={() => {setMode("login")}}/>
+                return <ChangePasswordForm token={tokenObj} handleBack={() => {
+                    setMode("login")
+                }}/>
             }
             return (
-                <div
-                    style={{
-                        maxWidth: "450px",
-                        margin: "auto",
-                        padding: "25px",
-                        border: "1px solid #ccc",
-                        borderRadius: "5px"
-                    }}>
+                <div className={"transition-all duration-300"}
+                     style={{
+                         maxWidth: "450px",
+                         margin: "auto",
+                         padding: "25px",
+                         border: "1px solid #ccc",
+                         borderRadius: "5px"
+                     }}>
                     <h2>🍍你的菠萝🍍</h2>
-                    <p onClick={() => {
-                    }}>菠萝🍍农场: {api} (点击可更换/复制分享链接)</p>
+                    <p>菠萝🍍农场: <a href={"/api?callback=login"}
+                                     className={"underline underline-offset-1 text-cyan-700"}>{api}</a> (点击可更换/复制分享链接)
+                    </p>
                     <p>恭喜你,你已经成功登录 你的用户名是{tokenObj.username}</p>
                     <p>你要退出登录吗?请点击下面的<label className={styles.red}>红色</label>按钮</p>
                     <p>你要更换密码吗?请点击下面的<label className={styles.yellow}>黄色</label>按钮</p>
