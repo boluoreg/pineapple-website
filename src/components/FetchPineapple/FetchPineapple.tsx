@@ -69,7 +69,7 @@ function FetchPineapple() {
         } catch (error) {
             setPineapple(null);
             if (axios.isAxiosError(error)) {
-                if (!captchaTicket) {
+                if (error.response?.status === 403) {
                     setShowCaptcha(true);
                 }
                 setError(error.response?.data?.message || "菠萝🍍端有问题!");
@@ -161,7 +161,7 @@ function FetchPineapple() {
 
             {showCaptcha && <div className={"flex flex-col items-center p-2 rounded-xl border-2 border-slate-500"}>
                 <label className={"text-red-500"}>你是菠萝人吗?请完成验证</label>
-                <CaptchaChallenge/>
+                <CaptchaChallenge onComplete={() => setShowCaptcha(false)}/>
             </div>}
 
             {(token && tokenObj?.roles.includes("ADMIN")) &&
