@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 
 function ChangeApiForm() {
     const [api, setApi] = useLocalStorage("api");
+    const [, setToken] = useLocalStorage("token");
     const [newApiAddress, setNewApiAddress] = useState(api);
     const navigate = useNavigate();
 
@@ -13,6 +14,10 @@ function ChangeApiForm() {
     const processChangeApi = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null); // clear error
+        if (newApiAddress === api) {
+            setError(`你已经在${api}这个农场了`)
+            return;
+        }
         if (!(newApiAddress.startsWith("http://") || newApiAddress.startsWith("https://"))) {
             setError("你的菠萝🍍协议不对,应该是http或者是它的复数");
             return;
@@ -20,6 +25,9 @@ function ChangeApiForm() {
         setApi(newApiAddress);
         const params = new URLSearchParams(window.location.search);
         const callbackParam = params.get('callback');
+
+        // clear token
+        setToken(null)
 
         if (callbackParam) {
             navigate(callbackParam);

@@ -5,9 +5,12 @@ import {RestBean, setPageTitle, Token, useLocalStorage} from "../../utils.ts";
 
 import styles from "./LoginForm.module.css"
 import ChangePasswordForm from "./ChangePasswordForm.tsx";
+import {useNavigate} from "react-router-dom";
 
 function LoginForm() {
     setPageTitle("🍍 登录你的菠萝 | 菠萝注册鸡 - 注册属于你的菠萝")
+
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

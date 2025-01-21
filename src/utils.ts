@@ -8,11 +8,25 @@ export function useLocalStorage(key: string) {
     });
 
     useEffect(() => {
-        // Update localStorage whenever the value changes
         if (value !== null) {
             localStorage.setItem(key, JSON.stringify(value));
+        } else {
+            localStorage.removeItem(key);
         }
+
+        window.dispatchEvent(new StorageEvent("storage", { key, newValue: value ? JSON.stringify(value) : null }));
     }, [value, key]);
+
+    useEffect(() => {
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === key) {
+                setValue(event.newValue ? JSON.parse(event.newValue) : null);
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, [key]);
 
     return [value, setValue];
 }

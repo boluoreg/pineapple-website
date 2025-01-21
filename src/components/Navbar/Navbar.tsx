@@ -1,10 +1,22 @@
-import {useLocalStorage} from "../../utils.ts";
+import {Token, useLocalStorage} from "../../utils.ts";
 import styles from "./Navbar.module.css"
 import {useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
 
 
 function Navbar() {
     const navigate = useNavigate();
+
+    const [token] = useLocalStorage("token");
+    const [tokenObj, setTokenObj] = useState<Token | null>()
+
+    useEffect(() => {
+        if (!token) {
+            setTokenObj(null);
+            return;
+        }
+        setTokenObj(JSON.parse(token));
+    }, [token]);
 
     const processLogin = () => {
         navigate("/user");
@@ -22,7 +34,7 @@ function Navbar() {
                 <label className={`${styles.api} absolute group-hover:scale-100 scale-0`}>{api}</label>
             </div>
             <a className={styles.link}>🍍菠萝注册鸡 - 注册属于你的菠萝</a>
-            <div className={styles.link} onClick={processLogin}>登录/注册</div>
+            <div className={styles.link} onClick={processLogin}>{token? `${tokenObj?.username}` : '登录/注册'}</div>
         </div>
     </>)
 }
