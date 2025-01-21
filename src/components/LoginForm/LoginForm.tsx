@@ -52,7 +52,8 @@ function LoginForm() {
             setClickCount(clickCount + 1);
             return;
         }
-        setToken(null);
+        localStorage.removeItem("token");
+        setToken(null)
         // post to the logout endpoint
         const tokenObj: Token = JSON.parse(token)
         const jwt = tokenObj.token;
@@ -191,27 +192,30 @@ function LoginForm() {
                                         required/>
                     }
                 </div>
-                {
-                    register ? <div className={"flex flex-row"}>
-                            <button type="submit" className={`${styles.button} ${styles.yellow}`}>
-                                创建你的菠萝户🍍
-                            </button>
-                            <button type="button" onClick={handleToggleRegister}
-                                    className={`${styles.button} ${styles.red}`}>
-                                不,我想起来我有菠萝🍍
-                            </button>
-                        </div> :
+                <div className={"flex flex-col"}>
+                    {
+                        register ? <div className={"flex flex-row"}>
+                                <button type="submit" className={`${styles.button} ${styles.yellow}`}>
+                                    创建你的菠萝户🍍
+                                </button>
+                                <button type="button" onClick={handleToggleRegister}
+                                        className={`${styles.button} ${styles.red}`}>
+                                    不,我想起来我有菠萝🍍
+                                </button>
+                            </div> :
 
-                        <div className={"flex flex-row"}>
-                            <button type="submit" className={`${styles.button} ${styles.blue}`}>
-                                我有菠萝🍍,请放我进去!
-                            </button>
-                            <button type="button" onClick={handleToggleRegister}
-                                    className={`${styles.button} ${styles.yellow}`}>
-                                要一个菠萝🍍
-                            </button>
-                        </div>
-                }
+                            <div className={"flex flex-row"}>
+                                <button type="submit" className={`${styles.button} ${styles.blue}`}>
+                                    我有菠萝🍍,请放我进去!
+                                </button>
+                                <button type="button" onClick={handleToggleRegister}
+                                        className={`${styles.button} ${styles.yellow}`}>
+                                    要一个菠萝🍍
+                                </button>
+                            </div>
+                    }
+                    <button onClick={processBack} className={`${styles.button} ${styles.cyan}`}>我只是想要免费的菠萝</button>
+                </div>
             </form>
         </div>
     );

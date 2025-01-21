@@ -13,6 +13,11 @@
     color: white;
 }
 
+.cyan {
+    background: cyan;
+    color: black;
+}
+
 .red {
     background: red;
     color: white;
