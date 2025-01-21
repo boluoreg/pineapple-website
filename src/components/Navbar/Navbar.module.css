@@ -1,0 +1,13 @@
+.api {
+    @apply underline-offset-2 my-5 min-w-48;
+    color: blue;
+
+}
+
+.link {
+    user-select: none;
+}
+
+.link:hover {
+    @apply scale-105 transition-all backdrop-blur;
+}
