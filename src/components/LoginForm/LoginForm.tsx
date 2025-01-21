@@ -1,9 +1,10 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {setPageTitle, useLocalStorage} from "../../utils.ts";
+import {RestBean, setPageTitle, Token, useLocalStorage} from "../../utils.ts";
 
 import styles from "./LoginForm.module.css"
+import ChangePasswordForm from "./ChangePasswordForm.tsx";
 
 function LoginForm() {
     setPageTitle("🍍 登录你的菠萝 | 菠萝注册鸡 - 注册属于你的菠萝")
@@ -13,20 +14,7 @@ function LoginForm() {
     const [passwordVerify, setPasswordVerify] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    const [register, setRegister] = useState(false)
-
-    interface Token {
-        username: string;
-        token: string;
-        expire: number;
-        roles: string[];
-    }
-
-    interface RestBean<T> {
-        code: number;
-        message: string;
-        data: T;
-    }
+    const [mode, setMode] = useState("login")
 
     const [api, setApi] = useLocalStorage("api");
     const [token, setToken] = useLocalStorage("token");
@@ -69,7 +57,7 @@ function LoginForm() {
     }
 
     const handleToggleRegister = () => {
-        setRegister(!register);
+        setMode(mode !== "register" ? "register" : "login");
     }
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -102,6 +90,10 @@ function LoginForm() {
         }
     }
 
+    const processChangePassword = () => {
+        setMode("change-password")
+    }
+
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
@@ -130,10 +122,13 @@ function LoginForm() {
         // decode token
         const tokenObj: Token = JSON.parse(token)
         if (tokenObj.expire > Date.now()) {
+            if (mode === "change-password") {
+                return <ChangePasswordForm token={tokenObj} handleBack={() => {setMode("login")}}/>
+            }
             return (
                 <div
                     style={{
-                        maxWidth: "400px",
+                        maxWidth: "450px",
                         margin: "auto",
                         padding: "25px",
                         border: "1px solid #ccc",
@@ -144,25 +139,40 @@ function LoginForm() {
                     }}>菠萝🍍农场: {api} (点击可更换/复制分享链接)</p>
                     <p>恭喜你,你已经成功登录 你的用户名是{tokenObj.username}</p>
                     <p>你要退出登录吗?请点击下面的<label className={styles.red}>红色</label>按钮</p>
+                    <p>你要更换密码吗?请点击下面的<label className={styles.yellow}>黄色</label>按钮</p>
+                    <p>你要返回吗?请点击下面的<label className={styles.blue}>蓝色</label>按钮</p>
                     <button onClick={processLogout} className={`${styles.button} ${styles.red}`}>
                         {clickCount === 0 ? '出售菠萝🍍' : '你确认吗?请再点击一次'}
                     </button>
-                    <button onClick={processBack} className={`${styles.button} ${styles.blue}`}>
-                        不,我想要更多菠萝🍍
-                    </button>
+                    <div className={"flex flex-row"}>
+                        <button onClick={processChangePassword}
+                                className={`${styles.button} ${styles.yellow}`}>不,我要更换菠萝码🍍
+                        </button>
+                        <button onClick={processBack} className={`${styles.button} ${styles.blue}`}>
+                            不,我想要更多菠萝🍍
+                        </button>
+                    </div>
                 </div>
             )
         }
     }
 
     return (
-        <div
-            style={{maxWidth: "480px", margin: "auto", padding: "20px", border: "1px solid #ccc", borderRadius: "5px"}}>
-            <h2>🍍{register ? '注册' : '登录'}你的菠萝🍍</h2>
-            <p>菠萝🍍农场: <a href={"/api"}>{api}</a> (点击可更换/复制分享链接)</p>
-            {register && <p>用户名必须只包含英文字母,且长度大于等于5</p>}
+        <div className={"transition-all duration-300"}
+             style={{
+                 maxWidth: "480px",
+                 margin: "auto",
+                 padding: "20px",
+                 border: "1px solid #ccc",
+                 borderRadius: "5px"
+             }}>
+            <h2>🍍{mode === "register" ? '注册' : '登录'}你的菠萝🍍</h2>
+            <p>菠萝🍍农场: <a href={"/api?callback=login"}
+                             className={"underline underline-offset-1 text-cyan-700"}>{api}</a> (点击可更换/复制分享链接)
+            </p>
+            {mode === "register" && <p>用户名必须只包含英文字母,且长度大于等于5</p>}
             {error && <p style={{color: "red"}}>{error}</p>}
-            <form onSubmit={register ? handleRegister : handleLogin}>
+            <form onSubmit={mode === "register" ? handleRegister : handleLogin}>
                 <div>
                     <label>用户名:</label>
                     <input
@@ -184,17 +194,17 @@ function LoginForm() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                    {register && <input type="password"
-                                        value={passwordVerify}
-                                        className={styles.input}
-                                        placeholder={"🍍再输入一次菠萝码"}
-                                        onChange={(e) => setPasswordVerify(e.target.value)}
-                                        required/>
+                    {mode === "register" && <input type="password"
+                                                   value={passwordVerify}
+                                                   className={styles.input}
+                                                   placeholder={"🍍再输入一次菠萝码"}
+                                                   onChange={(e) => setPasswordVerify(e.target.value)}
+                                                   required/>
                     }
                 </div>
                 <div className={"flex flex-col"}>
                     {
-                        register ? <div className={"flex flex-row"}>
+                        mode === "register" ? <div className={"flex flex-row"}>
                                 <button type="submit" className={`${styles.button} ${styles.yellow}`}>
                                     创建你的菠萝户🍍
                                 </button>
@@ -214,7 +224,8 @@ function LoginForm() {
                                 </button>
                             </div>
                     }
-                    <button onClick={processBack} className={`${styles.button} ${styles.cyan}`}>我只是想要免费的菠萝</button>
+                    <button onClick={processBack} className={`${styles.button} ${styles.cyan}`}>我只是想要免费的菠萝
+                    </button>
                 </div>
             </form>
         </div>

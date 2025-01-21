@@ -20,3 +20,16 @@ export function useLocalStorage(key: string) {
 export function setPageTitle(title: string) {
     document.title = title;
 }
+
+export interface Token {
+    username: string;
+    token: string;
+    expire: number;
+    roles: string[];
+}
+
+export interface RestBean<T> {
+    code: number;
+    message: string;
+    data: T;
+}
