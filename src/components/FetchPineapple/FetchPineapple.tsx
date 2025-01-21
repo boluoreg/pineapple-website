@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 
 import axios, {AxiosResponse} from "axios";
 import {useNavigate} from "react-router-dom";
+import lizihao from "../../assets/lizihao.webp";
 
 function FetchPineapple() {
     const [pineapple, setPineapple] = useState<string | null>();
@@ -11,7 +12,10 @@ function FetchPineapple() {
     const [error, setError] = useState<string | null>(null)
     const [copied, setCopied] = useState(false);
     const [api] = useLocalStorage("api");
+    const [planting, setPlanting] = useState(false)
     const navigate = useNavigate();
+
+    const [pineappleCount, setPineappleCount] = useState(0)
 
     const [token] = useLocalStorage("token");
     const [tokenObj, setTokenObj] = useState<Token | null>()
@@ -83,6 +87,33 @@ function FetchPineapple() {
         navigate("/api");
     }
 
+    const producePineapple = async () => {
+        try {
+            const response = await axios.post(`${api}/api/production-line/planting`, {
+                count: pineappleCount
+            }, {
+                headers: {
+                    Authorization: `Bearer ${tokenObj?.token}`
+                }
+            })
+
+            if (!(response.data.code === 200)) {
+                setError(response.data.message);
+            } else {
+                setPlanting(true);
+                setTimeout(() => {
+                    fetchStatistics()
+                }, 2000);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setError(error.response?.data?.message || error);
+            } else {
+                console.error(error)
+            }
+        }
+    }
+
     setPageTitle("🍍 菠萝注册鸡 - 注册属于你的菠萝")
     if (analysis === null) {
         return (<>
@@ -121,11 +152,27 @@ function FetchPineapple() {
             </div>
             <button className={"btn-pineapple p-2 bg-amber-200 rounded-xl"} onClick={fetchPineapple}>🍍🍍🍍</button>
 
-            {(token && tokenObj?.roles.includes("ADMIN")) && <div className={"m-10 justify-center flex flex-col items-center"}>
-                <h2>神权面板</h2>
-                <p>你为什么能看到这个面板?主播是<a href="#" className={"underline-offset-1 underline text-cyan-500"} onClick={() => navigate('/easter-egg')}>李子豪</a>吗?</p>
-                <button className={"rounded-xl bg-red-500 p-3 text-white"}>开始生产菠萝🍍</button>
-            </div>
+            {(token && tokenObj?.roles.includes("ADMIN")) &&
+                <div className={"m-10 justify-center flex flex-col items-center"}>
+                    <h2>神权面板</h2>
+                    <div className={"flex flex-row"}>你为什么能看到这个面板?主播是
+                        <div className={"underline-offset-1 underline text-cyan-500 group flex flex-row"}>李子豪
+                            <img src={lizihao} className={"rounded-xl border border-slate-500 absolute scale-0 group-hover:scale-100 p-8 m-3"} alt="easter-egg"/>
+                        </div>
+                        吗?
+                    </div>
+                    <p>🍍我想要几个菠萝?🍍</p>
+                    <input
+                        placeholder={"🍍我想要几个菠萝🍍"}
+                        type="number"
+                        value={pineappleCount}
+                        onChange={(e) => setPineappleCount(parseInt(e.target.value))}
+                        className={"rounded-xl border border-amber-500 p-3"}/>
+                    <button className={"rounded-xl bg-red-500 p-3 text-white m-2"}
+                            disabled={planting}
+                            onClick={producePineapple}>{ planting ? '正在种菠萝🍍' :'开始生产菠萝🍍'}
+                    </button>
+                </div>
             }
         </div>
     </>);

@@ -51,7 +51,7 @@ function App() {
                     <Route path="/" element={<FetchPineapple/>}/>
                     <Route path="/user" element={<LoginForm/>}/>
                     <Route path="/api" element={<ChangeApiForm/>}/>
-                    <Route path="/easter-egg" element={<EasterEgg/>}/>
+                    {/*<Route path="/easter-egg" element={<EasterEgg/>}/>*/}
                 </Routes>
             </BrowserRouter>
         </>
