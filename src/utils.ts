@@ -57,3 +57,8 @@ export interface Analysis {
     totalPineapples: number;
     planting: number;
 }
+
+export interface Captcha {
+    ticket: string;
+    image: string;
+}

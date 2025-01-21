@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {useNavigate} from "react-router-dom";
 import lizihao from "../../assets/lizihao.webp";
+import CaptchaChallenge from "../Captcha/CaptchaChallenge.tsx";
 
 function FetchPineapple() {
     const [pineapple, setPineapple] = useState<string | null>();
@@ -31,6 +32,9 @@ function FetchPineapple() {
     const [loading, setLoading] = useState(true);
     const [analysis, setAnalysis] = useState<Analysis | null>(null)
 
+    const [showCaptcha, setShowCaptcha] = useState(false)
+    const [captchaTicket] = useLocalStorage("captcha");
+
     const fetchStatistics = async () => {
         try {
             const response: AxiosResponse<RestBean<Analysis>> = await axios.get(`${api}/api/pineapple`);
@@ -54,7 +58,7 @@ function FetchPineapple() {
     const fetchPineapple = async (): Promise<void> => {
         setCopied(false);
         try {
-            const response: AxiosResponse<RestBean<Pineapple>> = await axios.get(`${api}/api/pineapple/get`)
+            const response: AxiosResponse<RestBean<Pineapple>> = await axios.get(`${api}/api/pineapple/get?ticket=${captchaTicket}`)
             if (!(response.data.code === 200)) {
                 setError(response.data.message);
                 return
@@ -65,6 +69,9 @@ function FetchPineapple() {
         } catch (error) {
             setPineapple(null);
             if (axios.isAxiosError(error)) {
+                if (!captchaTicket) {
+                    setShowCaptcha(true);
+                }
                 setError(error.response?.data?.message || "菠萝🍍端有问题!");
             } else {
                 setError("菠萝🍍问题");
@@ -152,12 +159,19 @@ function FetchPineapple() {
             </div>
             <button className={"btn-pineapple p-2 bg-amber-200 rounded-xl"} onClick={fetchPineapple}>🍍🍍🍍</button>
 
+            {showCaptcha && <div className={"flex flex-col items-center p-2 rounded-xl border-2 border-slate-500"}>
+                <label className={"text-red-500"}>你是菠萝人吗?请完成验证</label>
+                <CaptchaChallenge/>
+            </div>}
+
             {(token && tokenObj?.roles.includes("ADMIN")) &&
                 <div className={"m-10 justify-center flex flex-col items-center"}>
                     <h2>神权面板</h2>
                     <div className={"flex flex-row"}>你为什么能看到这个面板?主播是
                         <div className={"underline-offset-1 underline text-cyan-500 group flex flex-row"}>李子豪
-                            <img src={lizihao} className={"rounded-xl border border-slate-500 absolute scale-0 group-hover:scale-100 p-8 m-3"} alt="easter-egg"/>
+                            <img src={lizihao}
+                                 className={"rounded-xl border border-slate-500 absolute scale-0 group-hover:scale-100 p-8 m-3"}
+                                 alt="easter-egg"/>
                         </div>
                         吗?
                     </div>
@@ -170,7 +184,7 @@ function FetchPineapple() {
                         className={"rounded-xl border border-amber-500 p-3"}/>
                     <button className={"rounded-xl bg-red-500 p-3 text-white m-2"}
                             disabled={planting}
-                            onClick={producePineapple}>{ planting ? '正在种菠萝🍍' :'开始生产菠萝🍍'}
+                            onClick={producePineapple}>{planting ? '正在种菠萝🍍' : '开始生产菠萝🍍'}
                     </button>
                 </div>
             }
