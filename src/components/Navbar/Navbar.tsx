@@ -26,6 +26,10 @@ function Navbar() {
         navigate("/api");
     }
 
+    const processHome = () => {
+        navigate("/");
+    }
+
     const [api] = useLocalStorage("api");
 
     return (<>
@@ -33,7 +37,7 @@ function Navbar() {
             <div className={`${styles.link} group flex-col flex`} onClick={processChangeAPI}>换菠萝农场
                 <label className={`${styles.api} absolute group-hover:scale-100 scale-0`}>{api}</label>
             </div>
-            <a className={styles.link}>🍍菠萝注册鸡 - 注册属于你的菠萝</a>
+            <div className={styles.link} onClick={processHome}>🍍菠萝注册鸡 - 注册属于你的菠萝</div>
             <div className={styles.link} onClick={processLogin}>{token? `${tokenObj?.username}` : '登录/注册'}</div>
         </div>
     </>)

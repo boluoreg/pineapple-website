@@ -16,20 +16,21 @@ function FetchPineapple() {
     const [loading, setLoading] = useState(true);
     const [analysis, setAnalysis] = useState<Analysis | null>(null)
 
-    useEffect(() => {
-        const fetchStatistics = async () => {
-            try {
-                const response: AxiosResponse<RestBean<Analysis>> = await axios.get(`${api}/api/pineapple`);
-                setAnalysis(response.data?.data);
-            } catch (error) {
-                setError("无法获取菠萝")
-                console.error("Error fetching statistics:", error);
-            }
-        };
+    const fetchStatistics = async () => {
+        try {
+            const response: AxiosResponse<RestBean<Analysis>> = await axios.get(`${api}/api/pineapple`);
+            setAnalysis(response.data?.data);
+        } catch (error) {
+            setError("无法获取菠萝")
+            console.error("Error fetching statistics:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchStatistics().then(() => {
             setLoading(false);
-        });
+        })
+
         const intervalId = setInterval(fetchStatistics, 50000);
 
         return () => clearInterval(intervalId);
@@ -38,7 +39,6 @@ function FetchPineapple() {
     const fetchPineapple = async (): Promise<void> => {
         setCopied(false);
         try {
-
             const response: AxiosResponse<RestBean<Pineapple>> = await axios.get(`${api}/api/pineapple/get`)
             if (!(response.data.code === 200)) {
                 setError(response.data.message);
@@ -46,6 +46,7 @@ function FetchPineapple() {
             }
             const data = response.data.data;
             setPineapple(`${data.username}:${data.password}`)
+            fetchStatistics();
         } catch (error) {
             setPineapple(null);
             if (axios.isAxiosError(error)) {
