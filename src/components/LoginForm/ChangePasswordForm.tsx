@@ -75,7 +75,7 @@ function ChangePasswordForm(props: Props) {
                         <div>
                             <label>旧的密码:</label>
                             <input
-                                type="text"
+                                type="password"
                                 className={`border-amber-400 border-2 ${styles.input}`}
                                 placeholder={"🍍旧的菠萝码"}
                                 value={oldPassword}

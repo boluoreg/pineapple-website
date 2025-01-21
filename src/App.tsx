@@ -6,6 +6,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import FetchPineapple from "./components/FetchPineapple/FetchPineapple.tsx";
 import Navbar from "./components/Navbar/Navbar.tsx";
 import ChangeApiForm from "./components/ChangeApiForm/ChangeApiForm.tsx";
+import EasterEgg from "./components/EasterEgg/EasterEgg.tsx";
 
 function App() {
     const title = useRef(document.title);
@@ -50,6 +51,7 @@ function App() {
                     <Route path="/" element={<FetchPineapple/>}/>
                     <Route path="/user" element={<LoginForm/>}/>
                     <Route path="/api" element={<ChangeApiForm/>}/>
+                    <Route path="/easter-egg" element={<EasterEgg/>}/>
                 </Routes>
             </BrowserRouter>
         </>

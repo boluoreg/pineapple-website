@@ -1,4 +1,4 @@
-import {Analysis, Pineapple, RestBean, setPageTitle, useLocalStorage} from "../../utils.ts";
+import {Analysis, Pineapple, RestBean, setPageTitle, Token, useLocalStorage} from "../../utils.ts";
 import {FaCheck, FaCopy} from "react-icons/fa";
 import {useEffect, useState} from "react";
 
@@ -12,6 +12,17 @@ function FetchPineapple() {
     const [copied, setCopied] = useState(false);
     const [api] = useLocalStorage("api");
     const navigate = useNavigate();
+
+    const [token] = useLocalStorage("token");
+    const [tokenObj, setTokenObj] = useState<Token | null>()
+
+    useEffect(() => {
+        if (!token) {
+            setTokenObj(null);
+            return;
+        }
+        setTokenObj(JSON.parse(token));
+    }, [token]);
 
     const [loading, setLoading] = useState(true);
     const [analysis, setAnalysis] = useState<Analysis | null>(null)
@@ -109,6 +120,13 @@ function FetchPineapple() {
                 }
             </div>
             <button className={"btn-pineapple p-2 bg-amber-200 rounded-xl"} onClick={fetchPineapple}>🍍🍍🍍</button>
+
+            {(token && tokenObj?.roles.includes("ADMIN")) && <div className={"m-10 justify-center flex flex-col items-center"}>
+                <h2>神权面板</h2>
+                <p>你为什么能看到这个面板?主播是<a href="#" className={"underline-offset-1 underline text-cyan-500"} onClick={() => navigate('/easter-egg')}>李子豪</a>吗?</p>
+                <button className={"rounded-xl bg-red-500 p-3 text-white"}>开始生产菠萝🍍</button>
+            </div>
+            }
         </div>
     </>);
 }
