@@ -30,16 +30,22 @@ function CaptchaChallenge() {
 
     return (<div className={"flex flex-col items-center justify-center"}>
         {error && <p className={"text-red-500"}>{error}</p>}
-        {captchaImage ? (
-            <div className={"flex flex-col items-center justify-center"}>
-                <p>我告诉你吧,其实你只要点击所有<label className={"text-red-500"}>旋转的菠萝</label>就可以通过挑战</p>
-                <img src={captchaImage} alt="Captcha" style={{cursor: "pointer"}}/>
+            {captchaImage ? (
+                <div className={"flex flex-col items-center justify-center"}>
+                    <p>我告诉你吧,其实你只要点击所有<label className={"text-red-500"}>旋转的菠萝</label>就可以通过挑战
+                    </p>
+                    <img src={captchaImage} alt="Captcha" style={{cursor: "pointer"}}/>
+                </div>
+            ) : (
+                (captchaImage && !error) && <p className={"text-cyan-500"}>加载中...</p>
+            )}
+            {captchaTicket && <p>Ticket: {captchaTicket}</p>}
+            <div className={"flex flex-row m-3"}>
+                {captchaImage &&
+                    <button className={"rounded-xl bg-yellow-200 text-sky-600 p-2 m-1"}>吃掉这些菠萝🍍</button>}
+                <button onClick={fetchCaptcha} className={"rounded-xl bg-amber-200 text-sky-600 p-2 m-1"}>换一个菠萝🍍挑战
+                </button>
             </div>
-        ) : (
-            (captchaImage && !error) && <p className={"text-cyan-500"}>加载中...</p>
-        )}
-        {captchaTicket && <p>Ticket: {captchaTicket}</p>}
-        <button onClick={fetchCaptcha} className={"rounded-xl bg-amber-200 text-sky-600 p-2"}>换一个菠萝🍍挑战</button>
     </div>);
 }
 
