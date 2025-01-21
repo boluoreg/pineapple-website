@@ -16,24 +16,9 @@ function LoginForm() {
 
     const [mode, setMode] = useState(window.location.hash || "login")
 
-    const [api, setApi] = useLocalStorage("api");
+    const [api] = useLocalStorage("api");
     const [token, setToken] = useLocalStorage("token");
     const [clickCount, setClickCount] = useState(0);
-
-    if (api === null) {
-        setApi("http://localhost:8080");
-    }
-
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const apiParam = params.get('api');
-
-        if (apiParam) {
-            setApi(apiParam);
-            params.delete("api")
-            window.location.search = params.toString()
-        }
-    }, [setApi]);
 
     const processLogout = async () => {
         if (clickCount === 0) {
@@ -53,7 +38,7 @@ function LoginForm() {
     }
 
     const processBack = () => {
-        window.location.href = "/";
+        navigate("/");
     }
 
     const handleToggleRegister = () => {

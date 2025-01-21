@@ -33,3 +33,13 @@ export interface RestBean<T> {
     message: string;
     data: T;
 }
+
+export interface Pineapple {
+    username: string;
+    password: string;
+}
+
+export interface Analysis {
+    totalPineapples: number;
+    planting: number;
+}

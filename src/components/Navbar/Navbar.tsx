@@ -1,14 +1,17 @@
 import {useLocalStorage} from "../../utils.ts";
 import styles from "./Navbar.module.css"
+import {useNavigate} from "react-router-dom";
 
 
 function Navbar() {
+    const navigate = useNavigate();
+
     const processLogin = () => {
-        window.location.href = "/user";
+        navigate("/user");
     }
 
     const processChangeAPI = () => {
-        window.location.href = "/api";
+        navigate("/api");
     }
 
     const [api] = useLocalStorage("api");
@@ -18,7 +21,7 @@ function Navbar() {
             <div className={`${styles.link} group flex-col flex`} onClick={processChangeAPI}>换菠萝农场
                 <label className={`${styles.api} absolute group-hover:scale-100 scale-0`}>{api}</label>
             </div>
-            <a className={styles.link} href={"/#"}>🍍菠萝注册鸡 - 注册属于你的菠萝</a>
+            <a className={styles.link}>🍍菠萝注册鸡 - 注册属于你的菠萝</a>
             <div className={styles.link} onClick={processLogin}>登录/注册</div>
         </div>
     </>)
