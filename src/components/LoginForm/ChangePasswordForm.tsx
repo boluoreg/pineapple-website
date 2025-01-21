@@ -64,7 +64,7 @@ function ChangePasswordForm(props: Props) {
                  borderRadius: "5px"
              }}>
             <h2>🍍修改你的菠萝码🍍</h2>
-            <p>菠萝🍍农场: <a href={"/api?callback=login"}
+            <p>菠萝🍍农场: <a href={"/api?callback=/user#login"}
                              className={"underline underline-offset-1 text-cyan-700"}>{api}</a> (点击可更换/复制分享链接)
             </p>
             {error && <p style={{color: "red"}}>{error}</p>}

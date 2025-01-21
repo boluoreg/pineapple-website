@@ -142,7 +142,7 @@ function LoginForm() {
                          borderRadius: "5px"
                      }}>
                     <h2>🍍你的菠萝🍍</h2>
-                    <p>菠萝🍍农场: <a href={"/api?callback=login"}
+                    <p>菠萝🍍农场: <a href={"/api?callback=/user#login"}
                                      className={"underline underline-offset-1 text-cyan-700"}>{api}</a> (点击可更换/复制分享链接)
                     </p>
                     <p>恭喜你,你已经成功登录 你的用户名是{tokenObj.username}</p>
@@ -175,7 +175,7 @@ function LoginForm() {
                  borderRadius: "5px"
              }}>
             <h2>🍍{mode === "register" ? '注册' : '登录'}你的菠萝🍍</h2>
-            <p>菠萝🍍农场: <a href={"/api?callback=login"}
+            <p>菠萝🍍农场: <a href={"/api?callback=/user#login"}
                              className={"underline underline-offset-1 text-cyan-700"}>{api}</a> (点击可更换/复制分享链接)
             </p>
             {mode === "register" && <p>用户名必须只包含英文字母,且长度大于等于5</p>}
