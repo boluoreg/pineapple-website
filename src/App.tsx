@@ -30,7 +30,7 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<FetchPineapple />} />
-                    <Route path="/login" element={<LoginForm />} />
+                    <Route path="/user" element={<LoginForm />} />
                 </Routes>
             </BrowserRouter>
         </>

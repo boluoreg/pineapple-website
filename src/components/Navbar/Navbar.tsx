@@ -4,7 +4,7 @@ import styles from "./Navbar.module.css"
 
 function Navbar() {
     const processLogin = () => {
-        window.location.href = "/login";
+        window.location.href = "/user";
     }
 
     const processChangeAPI = () => {
