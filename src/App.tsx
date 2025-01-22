@@ -6,7 +6,6 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import FetchPineapple from "./components/FetchPineapple/FetchPineapple.tsx";
 import Navbar from "./components/Navbar/Navbar.tsx";
 import ChangeApiForm from "./components/ChangeApiForm/ChangeApiForm.tsx";
-import EasterEgg from "./components/EasterEgg/EasterEgg.tsx";
 
 function App() {
     const title = useRef(document.title);
