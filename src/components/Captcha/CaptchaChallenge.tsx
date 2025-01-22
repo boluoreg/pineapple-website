@@ -83,6 +83,7 @@ function CaptchaChallenge(props: Props) {
                 <p>我告诉你吧,其实你只要点击所有<label className={"text-red-500"}>旋转的菠萝</label>就可以通过挑战</p>
                 <p>蓝色的小圆点再点一下可以取消,选完了点按钮提交验证码</p>
                 <p>图片里应该有4个菠萝🍍,如果没有请刷新验证码,这个是bug,后续会优化.</p>
+                <p>不要缩放网页,后续会优化</p>
                 <img ref={imgRef} onClick={handleImageClick}
                      src={captchaImage} alt="Captcha"
                      style={{cursor: "crosshair"}}/>
